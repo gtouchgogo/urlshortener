@@ -1,3 +1,4 @@
+-- 使用redis存储
 local _M = {}
 _M.redis = {}
 _M.redis.host = '127.0.0.1'

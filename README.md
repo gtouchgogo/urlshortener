@@ -5,6 +5,14 @@
 1. 因为服务是使用lua编写的nginx插件所以需要OpenResty
 2. 使用redis存储需要用到 resty.redis https://github.com/openresty/lua-resty-redis （OR默认自带，如果没有需要装一下)
 
+#### 持久化短链
+切换至分支pg，将使用postgresql作为存储短链的标志
+使用文件夹内 ```init.sql```建表, 
+
+并且安装pgmoon插件
+``` $ opm get leafo/pgmoon ```
+
+
 #### 部署
 1. 将整个文件夹拷贝到 nginx下的lua文件夹
 2. nginx.conf 添加路由
@@ -25,6 +33,7 @@ location /zsd {
 ```
 3. 按照注释修改配置文件 
 > /PATH/TO/NGINX/LUA//urlshortener/config/const.lua  
+> /PATH/TO/NGINX/LUA//urlshortener/config/db_config.lua 
 > /PATH/TO/NGINX/LUA/urlshortener/config/redis_config.lua
 
 4. 修改urlshortener下
@@ -69,9 +78,11 @@ data字段的值即为短链
 3. 自增id
  >用于制作不重复的短链
 
+#### pg中存储：
+同理redis，去除了redis存储时使用的各种prefix，具体字段查询注释 ```\d+ url_shortener```
 #### 转短链逻辑
 1. 通过redis制作一个自增sequence id 每有一个新的url插入后，就++
-
+re di s
 2. 获取每个url的md5sum， 得到一个sum
 
 3. 去redis查询sum如果已存在直接返回对应value (原地址)
@@ -95,3 +106,19 @@ data字段的值即为短链
 2. 内部报错之后没有正常的json返回（是ngixn的500页面）如有需要完善lua逻辑
 
 3. redis使用直连模式， 如果需要sentinel支持可以扩展https://github.com/ledgetech/lua-resty-redis-connector
+
+4. 因为nginx.conf中定义了 
+```
+location /zsd {
+    if ($request_uri ~* "([^/]*$)" ) {
+      set  $last_path_component  $1;
+    }
+    rewrite_by_lua_file /PATH/TO/NGINX/LUA/urlshortener/decode.lua;
+}   
+```
+
+如果不拼接uri 例/zsd/XX 直接访问 /zsd的话会出现直接去库里搜索短链为 zsd 的链接并跳转情况， 如需解决可以decode.lua 14行添加
+    ```assert(b62 == 'zsd')```
+
+5. 如果访问不存在短链的客户端过多可能会出现大量客户端超时日志
+```client timed out (110: Connection timed out) while waiting for request```

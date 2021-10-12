@@ -1,4 +1,5 @@
-package.path="/usr/local/openresty/nginx/startalk_lua/?.lua";
+package.path="/usr/local/openresty/lualib/?.lua"
+
 -- 收到短链转换原本
 local config = require "urlshortener.config.const"
 local pg_utils = require "urlshortener.pg_utils"
@@ -10,9 +11,8 @@ end
 
 -- local b62 = config.prefix.b62_k_prefix .. ngx.var.request_uri:gsub("%/","")
 local b62 = ngx.var.last_path_component
-ngx.log(ngx.DEBUG,  "checking short url " .. b62) 
-local url, err = pg_utils:get(pg, )
-if isempty(url) then
+local url, err = pg_utils:get_raw_url(pg, b62)
+if isempty(url) or url == nil then
 	if err then
 		ngx.log(ngx.ERR, "failed to get origin url" .. e)
 	end
