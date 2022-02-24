@@ -26,16 +26,16 @@ location / {
 #### 转短链
 POST请求
 ```
-curl --location --request POST 'https://uk.startalk.im/shortener.star' \
+curl --location --request POST 'https://YOUR_DOMAIN/shortener.star' \
 --header 'Content-Type: application/json' \
 --header 'bz-token: TOKEN_DEFINED' \
 --data-raw '{
-    "url": "https://qtalk.app/newapi/nck/qtalk_nav.qunar?c=test11e1.domain"
+    "url": "https://YOUR_URL_TO_BE_SHORTEN"
 }'
 ```
 返回 
 ```
-{"httpcode":200,"data":"https://bz2.it/7"}
+{"httpcode":200,"data":"https://YOUR_SHORT_URL/1"}
 ```
 data字段的值即为短链
 
