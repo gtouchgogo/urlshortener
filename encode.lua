@@ -17,7 +17,6 @@ end
 -- 检查header头
 local check_ret = false
 local token = ngx.req.get_headers()[config.token_name]
-ngx.log
 if not isempty(token)  then
 	for _,v in pairs(config.tokens) do
 		if v == token then
