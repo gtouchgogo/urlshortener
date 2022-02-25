@@ -14,17 +14,30 @@ location /shortener.star{
     rewrite_by_lua_file /PATH/TO/NGINX/LUA/urlshortener/encode.lua;
 }
 ```
-在短链的server下添加
+在短链的server下添加 (path以 /zsd 为例)
 ```
-location / {
-        rewrite_by_lua_file /PATH/TO/NGINX/LUA//urlshortener/decode.lua;
+location /zsd {
+    if ($request_uri ~* "([^/]*$)" ) {
+      set  $last_path_component  $1;
     }
+    rewrite_by_lua_file /PATH/TO/NGINX/LUA/urlshortener/decode.lua;
+}   
 ```
-3. 按照注释修改配置文件/PATH/TO/NGINX/LUA//urlshortener/config/const.lua /PATH/TO/NGINX/LUA/urlshortener/config/redis_config.lua 
-4. 重启or 使配置生效 
+3. 按照注释修改配置文件 
+> /PATH/TO/NGINX/LUA//urlshortener/config/const.lua  
+> /PATH/TO/NGINX/LUA/urlshortener/config/redis_config.lua
+
+4. 修改urlshortener下
+* encode.lua 
+* decode.lua 
+* redis_utils.lua  
+
+中package.path为nginx的lua目录 例如 /usr/local/openresty/lualib/?.lua  
+
+5. 重启or 使配置生效 
 
 #### 转短链
-POST请求
+POST请求 （将TOKEN_DEFINED替换为const.lua中的密钥 YOUR_DOMAIN为你的域名)
 ```
 curl --location --request POST 'https://YOUR_DOMAIN/shortener.star' \
 --header 'Content-Type: application/json' \

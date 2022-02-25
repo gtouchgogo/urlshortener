@@ -8,7 +8,8 @@ local function isempty(s)
   return s == nil or s == '' or s == "null" or (type(s) == "boolean" and not s) or s == ngx.null
 end
 
-local b62 = config.prefix.b62_k_prefix .. ngx.var.request_uri:gsub("%/","")
+-- local b62 = config.prefix.b62_k_prefix .. ngx.var.request_uri:gsub("%/","")
+local b62 = config.prefix.b62_k_prefix .. ngx.var.last_path_component
 ngx.log(ngx.DEBUG,  "checking short url " .. b62) 
 local url, err = redis_cli:get(b62)
 if isempty(url) then
