@@ -1,5 +1,4 @@
 package.path="/usr/local/openresty/nginx/startalk_lua/?.lua";
-local ckeyChecker = require("checks.qim.ckeycheck")
 
 
 local _M = {}
