@@ -52,7 +52,6 @@ local md5ret = ngx.md5(request_url)
 ngx.log(ngx.DEBUG,  "checking md5 key " .. md5ret) 
 local res,err = pg_utils:check_url_exists(pg, md5ret)
 -- local ok, err = redis_cli:exists(md5_key)
-ngx.log(ngx.DEBUG, "!!!!!!!")
 if res ~= false then
 	-- 已有对应短链
 	pg:keepalive()
@@ -61,7 +60,6 @@ if res ~= false then
 	ret.httpcode = ngx.HTTP_OK
 	local jret = cjson.encode(ret)
 	ngx.header.content_type = "application/json; charset=utf-8"  
-        ngx.log(ngx.DEBUG, "!!!!!!!")
 	ngx.say(jret)
 	ngx.exit(ngx.HTTP_OK)
 elseif err ~= nill then
@@ -80,7 +78,6 @@ else
 	-- 制作base62
 	local b62 = base62generator:encode(s_id)
 	if b62 ~= nil then
-		ngx.log(ngx.DEBUG, "b62 got")
 		shorten_url = config.prefix.base_url .. "/" .. b62
 		local b62_key = config.prefix.b62_k_prefix .. b62
 		ngx.log(ngx.DEBUG, "setting md5-baseurl")
